@@ -1,0 +1,1507 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+<title>Dokumentasi Foto WI</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<style>
+  :root{
+    --bg:#EDF0F2;
+    --surface:#FFFFFF;
+    --line:#D6DCE1;
+    --line-strong:#B9C2C9;
+    --ink:#1A2029;
+    --ink-soft:#5B6672;
+    --steel:#2B4257;
+    --steel-dark:#1C2B38;
+    --accent:#D98F1F;
+    --accent-dark:#B8760F;
+    --danger:#B3432B;
+    --danger-dark:#93341F;
+    --success:#3F7D58;
+    --mark:#FF3B30;
+    --radius:6px;
+    --mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+    --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  }
+  *{ box-sizing:border-box; }
+  html,body{ margin:0; padding:0; }
+  body{
+    background:var(--bg);
+    color:var(--ink);
+    font-family:var(--sans);
+    line-height:1.45;
+    -webkit-font-smoothing:antialiased;
+  }
+  .container{ max-width:880px; margin:0 auto; padding:0 16px 64px; }
+
+  .topbar{
+    background:var(--steel-dark);
+    color:#EDF0F2;
+    padding:16px;
+    position:sticky; top:0; z-index:20;
+    border-bottom:3px solid var(--accent);
+  }
+  .topbar-inner{ max-width:880px; margin:0 auto; display:flex; align-items:baseline; justify-content:space-between; flex-wrap:wrap; gap:8px; }
+  .brand h1{ font-size:18px; margin:0; font-weight:650; letter-spacing:.2px; }
+  .brand p{ margin:2px 0 0; font-size:12.5px; color:#B7C2CC; }
+
+  .toolbar{
+    display:flex; gap:10px; flex-wrap:wrap; align-items:center;
+    padding:16px 0 8px;
+  }
+  .toolbar .spacer{ flex:1; }
+
+  select, input[type="text"], input[type="number"], textarea{
+    font-family:inherit; font-size:14px; color:var(--ink);
+    background:var(--surface); border:1px solid var(--line-strong);
+    border-radius:var(--radius); padding:9px 11px;
+    width:100%;
+  }
+  select:focus, input:focus, textarea:focus{
+    outline:2px solid var(--accent); outline-offset:1px; border-color:var(--accent);
+  }
+  select.filter{ width:auto; min-width:180px; font-family:var(--mono); }
+  textarea{ resize:vertical; min-height:64px; }
+
+  button{ font-family:inherit; cursor:pointer; border:none; }
+  .btn{
+    display:inline-flex; align-items:center; justify-content:center; gap:6px;
+    font-size:13.5px; font-weight:600; padding:10px 16px; border-radius:var(--radius);
+    transition:background-color .12s ease; white-space:nowrap;
+  }
+  .btn:disabled{ opacity:.55; cursor:not-allowed; }
+  .btn-primary{ background:var(--accent); color:#241601; }
+  .btn-primary:hover:not(:disabled){ background:var(--accent-dark); }
+  .btn-secondary{ background:var(--steel); color:#fff; }
+  .btn-secondary:hover:not(:disabled){ background:var(--steel-dark); }
+  .btn-ghost{ background:transparent; color:var(--steel); border:1px solid var(--line-strong); }
+  .btn-ghost:hover:not(:disabled){ background:#E2E7EA; }
+  .btn-danger{ background:transparent; color:var(--danger); border:1px solid #E3BBAF; }
+  .btn-danger:hover:not(:disabled){ background:#FBEEEA; }
+  .btn-mark{ background:transparent; color:var(--mark); border:1px solid #F4B8B3; }
+  .btn-mark:hover:not(:disabled){ background:#FDECEA; }
+  .btn-sm{ padding:6px 10px; font-size:12.5px; }
+
+  .card{
+    background:var(--surface); border:1px solid var(--line);
+    border-radius:8px; padding:18px; margin-bottom:22px;
+  }
+  .card h2{ font-size:15px; margin:0 0 14px; font-weight:650; }
+
+  .form-grid{ display:grid; grid-template-columns:1fr 1fr; gap:12px 14px; }
+  .form-grid .field.full{ grid-column:1 / -1; }
+  @media (max-width:560px){ .form-grid{ grid-template-columns:1fr; } }
+  .field label{ display:block; font-size:12.5px; color:var(--ink-soft); margin-bottom:5px; font-family:var(--mono); }
+
+  .file-row{ display:flex; align-items:center; gap:12px; margin-top:14px; flex-wrap:wrap; }
+  .file-picker-label{
+    display:inline-flex; align-items:center; gap:6px; background:#fff;
+    border:1px dashed var(--line-strong); border-radius:var(--radius);
+    padding:10px 14px; font-size:13.5px; color:var(--steel); font-weight:600;
+  }
+  .file-picker-label:hover{ border-color:var(--accent); color:var(--accent-dark); }
+  input[type="file"]{ display:none; }
+  .preview-thumb{
+    width:56px; height:56px; object-fit:cover; border-radius:4px; border:1px solid var(--line);
+    display:none;
+  }
+  .file-name{ font-size:12.5px; color:var(--ink-soft); }
+
+  .help-note{ font-size:12px; color:var(--ink-soft); margin-top:12px; border-top:1px solid var(--line); padding-top:10px; }
+
+  .save-row{ display:flex; justify-content:flex-end; margin-top:16px; gap:8px; }
+
+  .status{
+    position:fixed; bottom:18px; left:50%; transform:translateX(-50%) translateY(20px);
+    background:var(--ink); color:#fff; padding:11px 18px; border-radius:6px;
+    font-size:13.5px; opacity:0; pointer-events:none; transition:all .18s ease; z-index:150;
+    max-width:90vw; text-align:center;
+  }
+  .status.show{ opacity:1; transform:translateX(-50%) translateY(0); }
+  .status.error{ background:var(--danger-dark); }
+  .status.success{ background:var(--success); }
+
+  .section-title{ font-size:14px; font-weight:650; color:var(--ink-soft); margin:26px 0 10px; font-family:var(--mono); }
+
+  .empty-state{
+    border:1px dashed var(--line-strong); border-radius:8px; padding:36px 20px;
+    text-align:center; color:var(--ink-soft); font-size:14px;
+  }
+
+  details.wi-group{
+    background:var(--surface); border:1px solid var(--line); border-left:4px solid var(--steel);
+    border-radius:6px; margin-bottom:10px; overflow:hidden;
+  }
+  details.wi-group[open]{ border-left-color:var(--accent); }
+  details.wi-group summary{
+    padding:13px 16px; cursor:pointer; list-style:none; display:flex; align-items:center;
+    justify-content:space-between; gap:10px; font-weight:650; font-size:14px;
+  }
+  details.wi-group summary::-webkit-details-marker{ display:none; }
+  summary .wi-count{ font-weight:500; font-size:12.5px; color:var(--ink-soft); font-family:var(--mono); }
+  summary .chev{ transition:transform .15s ease; color:var(--ink-soft); font-size:12px; }
+  details[open] summary .chev{ transform:rotate(90deg); }
+
+  .photo-row{
+    display:flex; gap:12px; padding:12px 16px; border-top:1px solid var(--line);
+    align-items:flex-start;
+  }
+  .thumb-btn{ padding:0; background:none; border-radius:5px; flex-shrink:0; }
+  .thumb{ width:64px; height:64px; object-fit:cover; border-radius:5px; border:1px solid var(--line); display:block; }
+  .row-info{ flex:1; min-width:0; }
+  .row-info .step{ font-family:var(--mono); font-size:12px; color:var(--accent-dark); font-weight:650; }
+  .row-info .kegiatan{ font-size:14px; margin:2px 0 0; word-wrap:break-word; }
+  .row-info .timestamp{ font-size:11.5px; color:var(--ink-soft); margin-top:4px; }
+  .row-actions{ display:flex; gap:6px; flex-shrink:0; flex-wrap:wrap; justify-content:flex-end; max-width:160px; }
+
+  .edit-grid{ display:grid; grid-template-columns:1fr; gap:8px; margin-top:6px; }
+  .edit-grid .edit-actions{ display:flex; gap:8px; justify-content:flex-end; }
+
+  .modal-overlay{
+    position:fixed; inset:0; background:rgba(15,20,26,.82); display:none;
+    align-items:center; justify-content:center; z-index:100; padding:24px;
+  }
+  .modal-overlay.show{ display:flex; }
+  .modal-overlay img{ max-width:100%; max-height:88vh; border-radius:4px; box-shadow:0 8px 30px rgba(0,0,0,.4); }
+  .modal-close{
+    position:absolute; top:18px; right:22px; background:rgba(255,255,255,.12); color:#fff;
+    border-radius:50%; width:38px; height:38px; font-size:18px; display:flex; align-items:center; justify-content:center;
+  }
+  .modal-close:hover{ background:rgba(255,255,255,.22); }
+  .modal-loading{ color:#fff; font-size:14px; }
+
+  .annotate-overlay{
+    position:fixed; inset:0; background:rgba(10,14,18,.92); display:none;
+    flex-direction:column; align-items:center; justify-content:center; z-index:120; padding:14px; gap:12px;
+  }
+  .annotate-overlay.show{ display:flex; }
+  .annotate-hint{ color:#D7DEE4; font-size:13px; text-align:center; max-width:560px; }
+  .annotate-toolbar{ display:flex; gap:8px; flex-wrap:wrap; justify-content:center; }
+  #annotateCanvas{
+    touch-action:none; max-width:92vw; max-height:58vh; width:auto; height:auto;
+    background:#000; border-radius:4px; cursor:crosshair; display:block;
+  }
+  .mode-toggle{ display:flex; border:1px solid var(--line-strong); border-radius:6px; overflow:hidden; }
+  .mode-toggle button{ padding:9px 16px; background:#fff; color:var(--steel); font-size:13px; font-weight:600; border:none; }
+  .mode-toggle button.active{ background:var(--mark); color:#fff; }
+
+  .color-row{ display:flex; gap:7px; align-items:center; background:#fff; padding:6px 10px; border-radius:8px; }
+  .swatch{ width:24px; height:24px; border-radius:50%; border:2px solid rgba(140,140,140,.6); padding:0; cursor:pointer; }
+  .swatch.active{ outline:2px solid #0A84FF; outline-offset:2px; }
+  input[type="color"]#colorCustom{
+    width:26px; height:26px; padding:0; border:2px dashed var(--line-strong); border-radius:50%;
+    overflow:hidden; background:none; cursor:pointer;
+  }
+
+  .mark-toolbar{
+    position:fixed; display:none; gap:6px; align-items:center; background:var(--ink);
+    padding:6px 8px; border-radius:8px; z-index:140; box-shadow:0 4px 14px rgba(0,0,0,.35);
+  }
+  .mark-toolbar.show{ display:flex; }
+  .mt-btn{ background:#33475B; color:#fff; border:none; border-radius:5px; padding:6px 10px; font-size:13px; font-weight:600; cursor:pointer; white-space:nowrap; }
+  .mt-btn:hover{ background:#3F5872; }
+  .mt-btn.mt-danger{ background:var(--danger); }
+  .mt-btn.mt-danger:hover{ background:var(--danger-dark); }
+  .mt-hint{ color:#C7D0D8; font-size:11px; padding:0 4px; white-space:nowrap; }
+
+  .text-input-panel{
+    position:fixed; display:none; z-index:160; background:#fff; border-radius:8px; padding:10px;
+    box-shadow:0 8px 24px rgba(0,0,0,.4); gap:8px; align-items:center; flex-wrap:nowrap;
+  }
+  .text-input-panel.show{ display:flex; }
+  .text-input-panel input[type="text"]{ min-width:200px; width:auto; }
+
+  .footer-row{ display:flex; justify-content:center; margin-top:30px; }
+
+  .spinner{
+    width:14px; height:14px; border:2px solid rgba(0,0,0,.25); border-top-color:currentColor;
+    border-radius:50%; animation:spin .7s linear infinite; display:inline-block;
+  }
+  @keyframes spin{ to{ transform:rotate(360deg); } }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-inner">
+    <div class="brand">
+      <h1>Dokumentasi Foto WI</h1>
+      <p>Arsip foto kerja untuk penyusunan Work Instruction</p>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+
+  <div class="toolbar">
+    <select id="filterSelect" class="filter" aria-label="Filter nomor WI">
+      <option value="all">Semua WI</option>
+    </select>
+    <span class="spacer"></span>
+    <button class="btn btn-secondary" id="btnZip">Unduh semua (ZIP)</button>
+  </div>
+
+  <div class="card">
+    <h2>Tambah foto baru</h2>
+    <div class="form-grid">
+      <div class="field">
+        <label for="wiNumber">Nomor WI</label>
+        <input type="text" id="wiNumber" placeholder="cth. 7.3" />
+      </div>
+      <div class="field">
+        <label for="wiTitle">Judul WI (opsional)</label>
+        <input type="text" id="wiTitle" placeholder="cth. Start-up CCWP Turbine 150 MW" />
+      </div>
+      <div class="field">
+        <label for="stepNumber">Nomor langkah</label>
+        <input type="text" id="stepNumber" placeholder="cth. 12" />
+      </div>
+      <div class="field">
+        <label for="kegiatan">Kegiatan / langkah kerja</label>
+        <input type="text" id="kegiatan" placeholder="cth. Start CCWP dari DCS sesuai unit yang ditentukan" />
+      </div>
+    </div>
+
+    <div class="file-row">
+      <label class="file-picker-label" for="fileInput">📷 Ambil / pilih foto</label>
+      <input type="file" id="fileInput" accept="image/*" />
+      <img id="previewThumb" class="preview-thumb" alt="Pratinjau" />
+      <span class="file-name" id="fileNameLabel"></span>
+      <button class="btn btn-mark btn-sm" id="btnAnnotateNew">🔴 Beri tanda</button>
+    </div>
+
+    <div class="save-row">
+      <button class="btn btn-ghost" id="btnClear">Bersihkan</button>
+      <button class="btn btn-primary" id="btnSave">Simpan foto</button>
+    </div>
+
+    <p class="help-note">Bisa tempel gambar langsung pakai <b>Ctrl+V</b> (screenshot, dsb), atau ambil/pilih file biasa. Foto otomatis disesuaikan ke resolusi tinggi (maks. sisi panjang 2400px, kualitas JPEG tinggi). Pakai "Beri tanda" buat kasih kotak merah dan/atau label teks — ukuran keduanya bisa diubah setelah dibuat.</p>
+  </div>
+
+  <div class="section-title" id="galleryTitle">Koleksi foto</div>
+  <div id="galleryContainer"></div>
+
+  <div class="footer-row">
+    <button class="btn btn-danger btn-sm" id="btnResetAll">Hapus semua data</button>
+  </div>
+
+</div>
+
+<div class="modal-overlay" id="modalOverlay">
+  <button class="modal-close" id="modalClose">✕</button>
+  <div id="modalBody"><span class="modal-loading">Memuat foto...</span></div>
+</div>
+
+<div class="annotate-overlay" id="annotateOverlay">
+  <p class="annotate-hint" id="annotateHint">Pilih warna di kiri sebelum menggambar. Mode Kotak: tarik buat gambar, tarik sudut buat ubah ukuran, tarik lingkaran biru di atas buat memutar. Mode Teks: klik satu titik lalu isi labelnya di kotak yang muncul. Mode Pulpen: tarik jari/mouse buat gambar bebas. Tap tanda yang sudah ada buat pilih/geser/hapus/ganti warna.</p>
+  <canvas id="annotateCanvas"></canvas>
+  <div class="annotate-toolbar">
+    <div class="color-row" id="colorRow">
+      <button class="swatch active" data-color="#FF3B30" style="background:#FF3B30" title="Merah"></button>
+      <button class="swatch" data-color="#F2A93B" style="background:#F2A93B" title="Amber"></button>
+      <button class="swatch" data-color="#FFD60A" style="background:#FFD60A" title="Kuning"></button>
+      <button class="swatch" data-color="#34C759" style="background:#34C759" title="Hijau"></button>
+      <button class="swatch" data-color="#0A84FF" style="background:#0A84FF" title="Biru"></button>
+      <button class="swatch" data-color="#FFFFFF" style="background:#FFFFFF" title="Putih"></button>
+      <button class="swatch" data-color="#111111" style="background:#111111" title="Hitam"></button>
+      <input type="color" id="colorCustom" value="#FF3B30" title="Warna kustom" />
+    </div>
+    <div class="mode-toggle">
+      <button id="btnModeBox" class="active">⬛ Kotak</button>
+      <button id="btnModeText">🔤 Label teks</button>
+      <button id="btnModePen">✏️ Pulpen</button>
+    </div>
+    <button class="btn btn-ghost btn-sm" id="btnAnnotateUndo">↺ Undo terakhir</button>
+    <button class="btn btn-ghost btn-sm" id="btnAnnotateClear">Hapus semua tanda</button>
+    <button class="btn btn-ghost" id="btnAnnotateCancel">Batal</button>
+    <button class="btn btn-primary" id="btnAnnotateDone">Selesai</button>
+  </div>
+</div>
+
+<div class="mark-toolbar" id="markToolbar"></div>
+
+<div class="text-input-panel" id="textInputPanel">
+  <input type="text" id="textInputField" placeholder="Isi teks label..." />
+  <button class="btn btn-ghost btn-sm" id="textInputCancel">Batal</button>
+  <button class="btn btn-primary btn-sm" id="textInputConfirm">OK</button>
+</div>
+
+<div class="status" id="statusBar"></div>
+
+<script>
+(function(){
+  const STORAGE_INDEX_KEY = 'wi-photo-index';
+  const MAX_STORED_CHARS = 4.5 * 1024 * 1024; // buffer under 5MB per-key cap
+  const MASTER_MAX_DIM = 2400;
+  const fullKey = id => 'wi-photo-full:' + id;
+  const genId = () => 'm' + Date.now() + '_' + Math.random().toString(36).slice(2, 7);
+
+  let photoIndex = [];
+  let currentFilter = 'all';
+  let selectedFile = null;
+  let annotatedMasterCanvas = null; // set when user annotates a pending new photo
+
+  const el = id => document.getElementById(id);
+  const filterSelect = el('filterSelect');
+  const galleryContainer = el('galleryContainer');
+  const galleryTitle = el('galleryTitle');
+  const statusBar = el('statusBar');
+  const fileInput = el('fileInput');
+  const previewThumb = el('previewThumb');
+  const fileNameLabel = el('fileNameLabel');
+  const btnSave = el('btnSave');
+  const btnClear = el('btnClear');
+  const btnZip = el('btnZip');
+  const btnResetAll = el('btnResetAll');
+  const btnAnnotateNew = el('btnAnnotateNew');
+  const modalOverlay = el('modalOverlay');
+  const modalBody = el('modalBody');
+  const modalClose = el('modalClose');
+  const annotateOverlay = el('annotateOverlay');
+  const annotateCanvas = el('annotateCanvas');
+  const btnAnnotateUndo = el('btnAnnotateUndo');
+  const btnAnnotateClear = el('btnAnnotateClear');
+  const btnAnnotateCancel = el('btnAnnotateCancel');
+  const btnAnnotateDone = el('btnAnnotateDone');
+  const btnModeBox = el('btnModeBox');
+  const btnModeText = el('btnModeText');
+  const btnModePen = el('btnModePen');
+  const markToolbar = el('markToolbar');
+  const colorRow = el('colorRow');
+  const colorCustom = el('colorCustom');
+  const textInputPanel = el('textInputPanel');
+  const textInputField = el('textInputField');
+  const textInputConfirm = el('textInputConfirm');
+  const textInputCancel = el('textInputCancel');
+
+  function showStatus(msg, type){
+    statusBar.textContent = msg;
+    statusBar.className = 'status show' + (type ? ' ' + type : '');
+    clearTimeout(showStatus._t);
+    showStatus._t = setTimeout(() => { statusBar.classList.remove('show'); }, 3200);
+  }
+
+  // ---------- storage helpers ----------
+  async function loadIndex(){
+    try{
+      const res = await window.storage.get(STORAGE_INDEX_KEY, false);
+      photoIndex = (res && res.value) ? JSON.parse(res.value) : [];
+    }catch(e){
+      photoIndex = [];
+    }
+  }
+  async function saveIndex(){
+    await window.storage.set(STORAGE_INDEX_KEY, JSON.stringify(photoIndex), false);
+  }
+
+  // ---------- image helpers ----------
+  function loadImageFromFile(file){
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => {
+        const img = new Image();
+        img.onload = () => resolve(img);
+        img.onerror = () => reject(new Error('Gagal membaca gambar'));
+        img.src = reader.result;
+      };
+      reader.onerror = () => reject(new Error('Gagal membaca file'));
+      reader.readAsDataURL(file);
+    });
+  }
+
+  function loadImageFromDataUrl(dataUrl){
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      img.onload = () => resolve(img);
+      img.onerror = () => reject(new Error('Gagal memuat foto'));
+      img.src = dataUrl;
+    });
+  }
+
+  function buildMasterCanvas(imgOrCanvas, maxDim){
+    let width = imgOrCanvas.naturalWidth || imgOrCanvas.width;
+    let height = imgOrCanvas.naturalHeight || imgOrCanvas.height;
+    if (Math.max(width, height) > maxDim){
+      const scale = maxDim / Math.max(width, height);
+      width = Math.round(width * scale);
+      height = Math.round(height * scale);
+    }
+    const canvas = document.createElement('canvas');
+    canvas.width = width; canvas.height = height;
+    canvas.getContext('2d').drawImage(imgOrCanvas, 0, 0, width, height);
+    return canvas;
+  }
+
+  function canvasToJpegLimited(canvas, maxChars){
+    let quality = 0.92;
+    let dataUrl = canvas.toDataURL('image/jpeg', quality);
+    while (dataUrl.length > maxChars && quality > 0.4){
+      quality -= 0.1;
+      dataUrl = canvas.toDataURL('image/jpeg', quality);
+    }
+    return dataUrl;
+  }
+
+  function buildThumbnailFromCanvas(canvas, maxDim){
+    let width = canvas.width, height = canvas.height;
+    if (Math.max(width, height) > maxDim){
+      const s = maxDim / Math.max(width, height);
+      width = Math.round(width * s); height = Math.round(height * s);
+    }
+    const t = document.createElement('canvas');
+    t.width = width; t.height = height;
+    t.getContext('2d').drawImage(canvas, 0, 0, width, height);
+    return t.toDataURL('image/jpeg', 0.6);
+  }
+
+  function dataUrlToBlob(dataUrl){
+    const [header, base64] = dataUrl.split(',');
+    const mime = (header.match(/data:(.*);base64/) || [,'image/jpeg'])[1];
+    const bin = atob(base64);
+    const arr = new Uint8Array(bin.length);
+    for (let i = 0; i < bin.length; i++) arr[i] = bin.charCodeAt(i);
+    return new Blob([arr], { type: mime });
+  }
+
+  function sanitize(str){
+    return (str || '').toString().normalize('NFKD').replace(/[^\w\s-]/g, '').trim().replace(/\s+/g, '-').slice(0, 40) || 'foto';
+  }
+
+  function buildFilename(entry){
+    return `WI${sanitize(entry.wiNumber)}_Langkah${sanitize(entry.stepNumber)}_${sanitize(entry.kegiatan)}.jpg`;
+  }
+
+  function triggerDownload(blob, filename){
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = filename;
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 3000);
+  }
+
+  // ---------- paste-from-clipboard ----------
+  window.addEventListener('paste', (e) => {
+    if (annotateOverlay.classList.contains('show')) return; // jangan ganggu sesi menandai yang lagi buka
+    const items = (e.clipboardData || window.clipboardData) ? (e.clipboardData || window.clipboardData).items : null;
+    if (!items) return;
+    for (const item of items){
+      if (item.type && item.type.indexOf('image') !== -1){
+        const blob = item.getAsFile();
+        if (blob){
+          e.preventDefault();
+          selectedFile = blob;
+          annotatedMasterCanvas = null;
+          previewThumb.src = URL.createObjectURL(blob);
+          previewThumb.style.display = 'inline-block';
+          fileNameLabel.textContent = 'Gambar dari clipboard';
+          showStatus('Gambar dari clipboard berhasil ditempel.', 'success');
+        }
+        break;
+      }
+    }
+  });
+
+  // ---------- panel input teks (pengganti window.prompt, aman dari sandbox) ----------
+  let pendingTextConfirmCb = null;
+  function canvasPointToScreen(pt){
+    const rect = annotateCanvas.getBoundingClientRect();
+    const scaleX = rect.width / annotateCanvas.width, scaleY = rect.height / annotateCanvas.height;
+    return { left: rect.left + pt.x * scaleX, top: rect.top + pt.y * scaleY };
+  }
+  function askText(initialValue, screenAnchor, onConfirm){
+    pendingTextConfirmCb = onConfirm;
+    textInputField.value = initialValue || '';
+    textInputPanel.classList.add('show');
+    const rect = textInputPanel.getBoundingClientRect();
+    let left = (screenAnchor ? screenAnchor.left : window.innerWidth / 2) - rect.width / 2;
+    let top = (screenAnchor ? screenAnchor.top : window.innerHeight / 2) - rect.height - 14;
+    if (top < 8) top = (screenAnchor ? screenAnchor.top : 8) + 30;
+    left = Math.max(8, Math.min(left, window.innerWidth - rect.width - 8));
+    top = Math.max(8, Math.min(top, window.innerHeight - rect.height - 8));
+    textInputPanel.style.left = left + 'px';
+    textInputPanel.style.top = top + 'px';
+    textInputField.focus();
+    textInputField.select();
+  }
+  function closeTextInputPanel(){
+    textInputPanel.classList.remove('show');
+    pendingTextConfirmCb = null;
+  }
+  textInputConfirm.addEventListener('click', () => {
+    const val = textInputField.value.trim();
+    const cb = pendingTextConfirmCb;
+    closeTextInputPanel();
+    if (cb) cb(val);
+  });
+  textInputCancel.addEventListener('click', () => {
+    const cb = pendingTextConfirmCb;
+    closeTextInputPanel();
+    if (cb) cb(null);
+  });
+  textInputField.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter'){ e.preventDefault(); e.stopPropagation(); textInputConfirm.click(); }
+    else if (e.key === 'Escape'){ e.preventDefault(); e.stopPropagation(); textInputCancel.click(); }
+  });
+
+  // ---------- rotasi: helper matematika ----------
+  function rotatePoint(px, py, cx, cy, angle){
+    const dx = px - cx, dy = py - cy;
+    const cos = Math.cos(angle), sin = Math.sin(angle);
+    return { x: cx + dx * cos - dy * sin, y: cy + dx * sin + dy * cos };
+  }
+  function toLocalPoint(pt, cx, cy, angle){
+    return rotatePoint(pt.x, pt.y, cx, cy, -angle);
+  }
+  const HANDLE_ANCHOR_FRAC = {
+    se: { x: 0, y: 0 }, ne: { x: 0, y: 1 }, sw: { x: 1, y: 0 }, nw: { x: 1, y: 1 }
+  };
+  const HANDLE_SIGN = {
+    se: { sx: 1, sy: 1 }, ne: { sx: 1, sy: -1 }, sw: { sx: -1, sy: 1 }, nw: { sx: -1, sy: -1 }
+  };
+  let annotatorBaseCanvas = null;
+  let annotatorMarks = []; // {id,type:'box',x,y,w,h,color} | {id,type:'text',x,y,text,fontSize,color}
+  let annotatorMode = 'box'; // tool aktif untuk MEMBUAT tanda baru
+  let annotatorColor = '#FF3B30'; // warna aktif untuk tanda baru
+  let selectedMarkId = null;
+  let interaction = null; // {type:'draw-box'|'place-text'|'move'|'resize', ...}
+
+  function contrastTextColor(hex){
+    const c = (hex || '#FF3B30').replace('#', '');
+    const r = parseInt(c.substring(0, 2), 16), g = parseInt(c.substring(2, 4), 16), b = parseInt(c.substring(4, 6), 16);
+    const lum = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+    return lum > 0.6 ? '#111111' : '#FFFFFF';
+  }
+
+  function setActiveSwatch(color){
+    const norm = (color || '').toLowerCase();
+    colorRow.querySelectorAll('.swatch').forEach(b => b.classList.toggle('active', b.dataset.color.toLowerCase() === norm));
+  }
+  colorRow.querySelectorAll('.swatch').forEach(btn => {
+    btn.addEventListener('click', () => {
+      annotatorColor = btn.dataset.color;
+      colorCustom.value = annotatorColor;
+      setActiveSwatch(annotatorColor);
+      const sel = annotatorMarks.find(m => m.id === selectedMarkId);
+      if (sel){ sel.color = annotatorColor; redrawAnnotator(); updateMarkToolbarPosition(); }
+    });
+  });
+  colorCustom.addEventListener('input', () => {
+    annotatorColor = colorCustom.value;
+    setActiveSwatch(annotatorColor);
+    const sel = annotatorMarks.find(m => m.id === selectedMarkId);
+    if (sel){ sel.color = annotatorColor; redrawAnnotator(); updateMarkToolbarPosition(); }
+  });
+
+  function roundRectPath(ctx, x, y, w, h, r){
+    ctx.beginPath();
+    ctx.moveTo(x + r, y);
+    ctx.arcTo(x + w, y, x + w, y + h, r);
+    ctx.arcTo(x + w, y + h, x, y + h, r);
+    ctx.arcTo(x, y + h, x, y, r);
+    ctx.arcTo(x, y, x + w, y, r);
+    ctx.closePath();
+  }
+
+  function drawBox(ctx, b, canvasWidth, isSelected){
+    const angle = b.angle || 0;
+    const cx = b.x + b.w / 2, cy = b.y + b.h / 2;
+    ctx.save();
+    ctx.translate(cx, cy);
+    ctx.rotate(angle);
+    ctx.translate(-cx, -cy);
+
+    const desiredLw = b.thickness || Math.max(4, Math.round(canvasWidth / 220));
+    const lw = Math.max(1, Math.min(desiredLw, Math.max(1, Math.round(Math.min(b.w, b.h) / 4))));
+    ctx.lineWidth = lw + Math.max(1, Math.round(lw * 0.4));
+    ctx.strokeStyle = 'rgba(0,0,0,0.55)';
+    ctx.strokeRect(b.x, b.y, b.w, b.h);
+    ctx.lineWidth = lw;
+    ctx.strokeStyle = b.color || '#FF3B30';
+    ctx.strokeRect(b.x, b.y, b.w, b.h);
+
+    if (isSelected){
+      const handleR = Math.max(5, Math.min(canvasWidth * 0.007, Math.min(b.w, b.h) / 3));
+      [{x:b.x,y:b.y},{x:b.x+b.w,y:b.y},{x:b.x,y:b.y+b.h},{x:b.x+b.w,y:b.y+b.h}].forEach(h => {
+        ctx.beginPath();
+        ctx.arc(h.x, h.y, handleR, 0, Math.PI * 2);
+        ctx.fillStyle = '#FFFFFF';
+        ctx.fill();
+        ctx.lineWidth = 2;
+        ctx.strokeStyle = '#2B4257';
+        ctx.stroke();
+      });
+      const rotOffset = screenPxToCanvasPx(40);
+      const rx = cx, ry = b.y - rotOffset;
+      ctx.beginPath();
+      ctx.moveTo(cx, b.y);
+      ctx.lineTo(rx, ry);
+      ctx.strokeStyle = '#8FD3FF';
+      ctx.lineWidth = 2;
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.arc(rx, ry, handleR, 0, Math.PI * 2);
+      ctx.fillStyle = '#8FD3FF';
+      ctx.fill();
+      ctx.lineWidth = 2;
+      ctx.strokeStyle = '#2B4257';
+      ctx.stroke();
+    }
+    ctx.restore();
+  }
+
+  function measureTextBox(ctx, m, canvasWidth, canvasHeight){
+    ctx.font = `bold ${m.fontSize}px -apple-system, "Segoe UI", Roboto, Arial, sans-serif`;
+    ctx.textBaseline = 'top';
+    const padX = Math.round(m.fontSize * 0.5);
+    const padY = Math.round(m.fontSize * 0.32);
+    const textW = ctx.measureText(m.text).width;
+    const boxW = textW + padX * 2;
+    const boxH = m.fontSize + padY * 2;
+    let bx = m.x, by = m.y;
+    if (bx + boxW > canvasWidth) bx = canvasWidth - boxW - 4;
+    if (bx < 4) bx = 4;
+    if (by + boxH > canvasHeight) by = canvasHeight - boxH - 4;
+    if (by < 4) by = 4;
+    return { bx, by, boxW, boxH, padX, padY };
+  }
+
+  function drawTextMark(ctx, m, canvasWidth, canvasHeight, isSelected){
+    const { bx, by, boxW, boxH, padX, padY } = measureTextBox(ctx, m, canvasWidth, canvasHeight);
+    roundRectPath(ctx, bx - 3, by - 3, boxW + 6, boxH + 6, 6);
+    ctx.fillStyle = 'rgba(0,0,0,0.55)';
+    ctx.fill();
+    roundRectPath(ctx, bx, by, boxW, boxH, 5);
+    ctx.fillStyle = m.color || '#FF3B30';
+    ctx.fill();
+    ctx.fillStyle = contrastTextColor(m.color);
+    ctx.font = `bold ${m.fontSize}px -apple-system, "Segoe UI", Roboto, Arial, sans-serif`;
+    ctx.textBaseline = 'top';
+    ctx.fillText(m.text, bx + padX, by + padY);
+    if (isSelected){
+      ctx.setLineDash([6, 4]);
+      ctx.lineWidth = 2;
+      ctx.strokeStyle = '#8FD3FF';
+      roundRectPath(ctx, bx - 3, by - 3, boxW + 6, boxH + 6, 6);
+      ctx.stroke();
+      ctx.setLineDash([]);
+    }
+  }
+
+  function penBoundingBox(m){
+    let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+    (m.points || []).forEach(p => {
+      if (p.x < minX) minX = p.x; if (p.x > maxX) maxX = p.x;
+      if (p.y < minY) minY = p.y; if (p.y > maxY) maxY = p.y;
+    });
+    if (minX === Infinity){ minX = minY = maxX = maxY = 0; }
+    return { minX, minY, maxX, maxY };
+  }
+
+  function drawPenStroke(ctx, m, canvasWidth, isSelected){
+    const pts = m.points || [];
+    const lw = m.thickness || Math.max(4, Math.round(canvasWidth / 220));
+    if (pts.length === 1){
+      const r = Math.max(2, lw / 2);
+      ctx.beginPath(); ctx.arc(pts[0].x, pts[0].y, r + 2, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(0,0,0,0.55)'; ctx.fill();
+      ctx.beginPath(); ctx.arc(pts[0].x, pts[0].y, r, 0, Math.PI * 2);
+      ctx.fillStyle = m.color || '#FF3B30'; ctx.fill();
+    } else if (pts.length > 1){
+      ctx.lineJoin = 'round'; ctx.lineCap = 'round';
+      ctx.lineWidth = lw + Math.max(1, Math.round(lw * 0.4));
+      ctx.strokeStyle = 'rgba(0,0,0,0.55)';
+      ctx.beginPath(); ctx.moveTo(pts[0].x, pts[0].y);
+      for (let i = 1; i < pts.length; i++) ctx.lineTo(pts[i].x, pts[i].y);
+      ctx.stroke();
+      ctx.lineWidth = lw;
+      ctx.strokeStyle = m.color || '#FF3B30';
+      ctx.beginPath(); ctx.moveTo(pts[0].x, pts[0].y);
+      for (let i = 1; i < pts.length; i++) ctx.lineTo(pts[i].x, pts[i].y);
+      ctx.stroke();
+    }
+    if (isSelected && pts.length > 0){
+      const bbox = penBoundingBox(m);
+      ctx.setLineDash([6, 4]); ctx.lineWidth = 2; ctx.strokeStyle = '#8FD3FF';
+      ctx.strokeRect(bbox.minX - 8, bbox.minY - 8, (bbox.maxX - bbox.minX) + 16, (bbox.maxY - bbox.minY) + 16);
+      ctx.setLineDash([]);
+    }
+  }
+
+  function drawMark(ctx, m, canvasWidth, canvasHeight, isSelected){
+    if (m.type === 'text') drawTextMark(ctx, m, canvasWidth, canvasHeight, isSelected);
+    else if (m.type === 'pen') drawPenStroke(ctx, m, canvasWidth, isSelected);
+    else drawBox(ctx, m, canvasWidth, isSelected);
+  }
+
+  function redrawAnnotator(previewMark){
+    const ctx = annotateCanvas.getContext('2d');
+    ctx.clearRect(0, 0, annotateCanvas.width, annotateCanvas.height);
+    ctx.drawImage(annotatorBaseCanvas, 0, 0);
+    annotatorMarks.forEach(m => drawMark(ctx, m, annotateCanvas.width, annotateCanvas.height, m.id === selectedMarkId));
+    if (previewMark) drawMark(ctx, previewMark, annotateCanvas.width, annotateCanvas.height, false);
+  }
+
+  function flattenMarks(ctx, canvasWidth, canvasHeight){
+    annotatorMarks.forEach(m => drawMark(ctx, m, canvasWidth, canvasHeight, false));
+  }
+
+  function normalizeBox(p1, p2){
+    return { type: 'box', x: Math.min(p1.x, p2.x), y: Math.min(p1.y, p2.y), w: Math.abs(p2.x - p1.x), h: Math.abs(p2.y - p1.y) };
+  }
+
+  function canvasPointFromEvent(e){
+    const rect = annotateCanvas.getBoundingClientRect();
+    const scaleX = annotateCanvas.width / rect.width;
+    const scaleY = annotateCanvas.height / rect.height;
+    return { x: (e.clientX - rect.left) * scaleX, y: (e.clientY - rect.top) * scaleY };
+  }
+
+  // Skala tampilan vs resolusi asli kanvas berbeda jauh di HP, jadi ambang batas
+  // tap/drag & radius pegangan sudut dihitung dalam pixel LAYAR lalu dikonversi
+  // ke pixel kanvas — supaya tap tetap kedetect sebagai tap walau foto beresolusi tinggi.
+  function screenPxToCanvasPx(px){
+    const rect = annotateCanvas.getBoundingClientRect();
+    const scale = rect.width / annotateCanvas.width || 1;
+    return px / scale;
+  }
+
+  function pointToSegmentDist(p, a, b){
+    const dx = b.x - a.x, dy = b.y - a.y;
+    const lenSq = dx * dx + dy * dy;
+    if (lenSq === 0) return Math.hypot(p.x - a.x, p.y - a.y);
+    let t = ((p.x - a.x) * dx + (p.y - a.y) * dy) / lenSq;
+    t = Math.max(0, Math.min(1, t));
+    return Math.hypot(p.x - (a.x + t * dx), p.y - (a.y + t * dy));
+  }
+
+  function hitTestMark(ctx, m, pt){
+    if (m.type === 'box'){
+      const angle = m.angle || 0;
+      let local = pt;
+      if (angle){
+        const cx = m.x + m.w / 2, cy = m.y + m.h / 2;
+        local = toLocalPoint(pt, cx, cy, angle);
+      }
+      return local.x >= m.x && local.x <= m.x + m.w && local.y >= m.y && local.y <= m.y + m.h;
+    }
+    if (m.type === 'pen'){
+      const pts = m.points || [];
+      if (pts.length === 0) return false;
+      if (pts.length === 1) return Math.hypot(pt.x - pts[0].x, pt.y - pts[0].y) <= screenPxToCanvasPx(16);
+      const threshold = Math.max((m.thickness || 4) / 2 + screenPxToCanvasPx(10), screenPxToCanvasPx(14));
+      for (let i = 0; i < pts.length - 1; i++){
+        if (pointToSegmentDist(pt, pts[i], pts[i + 1]) <= threshold) return true;
+      }
+      return false;
+    }
+    const { bx, by, boxW, boxH } = measureTextBox(ctx, m, annotateCanvas.width, annotateCanvas.height);
+    return pt.x >= bx && pt.x <= bx + boxW && pt.y >= by && pt.y <= by + boxH;
+  }
+
+  function findMarkAt(pt){
+    const ctx = annotateCanvas.getContext('2d');
+    for (let i = annotatorMarks.length - 1; i >= 0; i--){
+      if (hitTestMark(ctx, annotatorMarks[i], pt)) return annotatorMarks[i];
+    }
+    return null;
+  }
+
+  function getBoxHandles(b){
+    const local = [
+      { name: 'nw', x: b.x, y: b.y },
+      { name: 'ne', x: b.x + b.w, y: b.y },
+      { name: 'sw', x: b.x, y: b.y + b.h },
+      { name: 'se', x: b.x + b.w, y: b.y + b.h }
+    ];
+    const angle = b.angle || 0;
+    if (!angle) return local;
+    const cx = b.x + b.w / 2, cy = b.y + b.h / 2;
+    return local.map(c => { const r = rotatePoint(c.x, c.y, cx, cy, angle); return { name: c.name, x: r.x, y: r.y }; });
+  }
+
+  function getRotateHandle(b){
+    const cx = b.x + b.w / 2, cy = b.y + b.h / 2;
+    const offset = screenPxToCanvasPx(40);
+    const local = { x: cx, y: b.y - offset };
+    const angle = b.angle || 0;
+    return angle ? rotatePoint(local.x, local.y, cx, cy, angle) : local;
+  }
+
+  function findHandleAt(box, pt){
+    const hitRadius = screenPxToCanvasPx(22);
+    for (const h of getBoxHandles(box)){
+      if (Math.hypot(pt.x - h.x, pt.y - h.y) <= hitRadius) return h.name;
+    }
+    const rot = getRotateHandle(box);
+    if (Math.hypot(pt.x - rot.x, pt.y - rot.y) <= hitRadius) return 'rotate';
+    return null;
+  }
+
+  function updateModeButtons(){
+    btnModeBox.classList.toggle('active', annotatorMode === 'box');
+    btnModeText.classList.toggle('active', annotatorMode === 'text');
+    btnModePen.classList.toggle('active', annotatorMode === 'pen');
+  }
+  btnModeBox.addEventListener('click', () => { annotatorMode = 'box'; updateModeButtons(); });
+  btnModeText.addEventListener('click', () => { annotatorMode = 'text'; updateModeButtons(); });
+  btnModePen.addEventListener('click', () => { annotatorMode = 'pen'; updateModeButtons(); });
+
+  function markScreenBounds(mark){
+    const ctx = annotateCanvas.getContext('2d');
+    const rect = annotateCanvas.getBoundingClientRect();
+    const scaleX = rect.width / annotateCanvas.width;
+    const scaleY = rect.height / annotateCanvas.height;
+    if (mark.type === 'box'){
+      return { left: rect.left + mark.x * scaleX, top: rect.top + mark.y * scaleY, width: mark.w * scaleX, height: mark.h * scaleY };
+    }
+    if (mark.type === 'pen'){
+      const bbox = penBoundingBox(mark);
+      return { left: rect.left + bbox.minX * scaleX, top: rect.top + bbox.minY * scaleY, width: (bbox.maxX - bbox.minX) * scaleX, height: (bbox.maxY - bbox.minY) * scaleY };
+    }
+    const { bx, by, boxW, boxH } = measureTextBox(ctx, mark, annotateCanvas.width, annotateCanvas.height);
+    return { left: rect.left + bx * scaleX, top: rect.top + by * scaleY, width: boxW * scaleX, height: boxH * scaleY };
+  }
+
+  function updateMarkToolbarPosition(){
+    const mark = annotatorMarks.find(m => m.id === selectedMarkId);
+    if (!mark){ markToolbar.classList.remove('show'); return; }
+    const b = markScreenBounds(mark);
+    const tbRect = markToolbar.getBoundingClientRect();
+    let left = b.left + b.width / 2 - tbRect.width / 2;
+    let top = b.top - tbRect.height - 10;
+    if (top < 8) top = b.top + b.height + 10;
+    left = Math.max(8, Math.min(left, window.innerWidth - tbRect.width - 8));
+    markToolbar.style.left = left + 'px';
+    markToolbar.style.top = top + 'px';
+  }
+
+  const MARK_PALETTE = ['#FF3B30', '#F2A93B', '#FFD60A', '#34C759', '#0A84FF', '#FFFFFF', '#111111'];
+  function markSwatchesHtml(mark){
+    return MARK_PALETTE.map(c => `<button class="swatch mt-swatch${(mark.color || '#FF3B30').toLowerCase() === c.toLowerCase() ? ' active' : ''}" data-color="${c}" style="background:${c}"></button>`).join('');
+  }
+  function wireMarkSwatches(mark){
+    markToolbar.querySelectorAll('.mt-swatch').forEach(btn => {
+      btn.addEventListener('click', () => {
+        mark.color = btn.dataset.color;
+        annotatorColor = btn.dataset.color;
+        colorCustom.value = annotatorColor;
+        setActiveSwatch(annotatorColor);
+        redrawAnnotator();
+        renderMarkToolbarContent(mark);
+        updateMarkToolbarPosition();
+      });
+    });
+  }
+
+  function renderMarkToolbarContent(mark){
+    if (mark.type === 'text'){
+      markToolbar.innerHTML = `
+        <button class="mt-btn" id="mtMinus">A−</button>
+        <button class="mt-btn" id="mtPlus">A+</button>
+        <button class="mt-btn" id="mtEdit">Edit teks</button>
+        ${markSwatchesHtml(mark)}
+        <button class="mt-btn mt-danger" id="mtDelete">Hapus</button>`;
+      el('mtMinus').onclick = () => { mark.fontSize = Math.max(12, mark.fontSize - 4); redrawAnnotator(); updateMarkToolbarPosition(); };
+      el('mtPlus').onclick = () => { mark.fontSize = Math.min(160, mark.fontSize + 4); redrawAnnotator(); updateMarkToolbarPosition(); };
+      el('mtEdit').onclick = () => {
+        const anchor = canvasPointToScreen({ x: mark.x, y: mark.y });
+        askText(mark.text, anchor, (val) => {
+          if (val){ mark.text = val; }
+          redrawAnnotator();
+          updateMarkToolbarPosition();
+        });
+      };
+      el('mtDelete').onclick = () => { annotatorMarks = annotatorMarks.filter(m => m.id !== mark.id); selectMark(null); };
+      wireMarkSwatches(mark);
+    } else if (mark.type === 'pen'){
+      markToolbar.innerHTML = `
+        <button class="mt-btn" id="mtThinner">▬− Tipis</button>
+        <button class="mt-btn" id="mtThicker">▬+ Tebal</button>
+        <span class="mt-hint">Tarik badan buat geser</span>
+        ${markSwatchesHtml(mark)}
+        <button class="mt-btn mt-danger" id="mtDelete">Hapus</button>`;
+      const maxThicknessPen = Math.max(20, Math.round(annotateCanvas.width / 30));
+      el('mtThinner').onclick = () => { mark.thickness = Math.max(1, (mark.thickness || 4) - 2); redrawAnnotator(); updateMarkToolbarPosition(); };
+      el('mtThicker').onclick = () => { mark.thickness = Math.min(maxThicknessPen, (mark.thickness || 4) + 2); redrawAnnotator(); updateMarkToolbarPosition(); };
+      el('mtDelete').onclick = () => { annotatorMarks = annotatorMarks.filter(m => m.id !== mark.id); selectMark(null); };
+      wireMarkSwatches(mark);
+    } else {
+      markToolbar.innerHTML = `
+        <button class="mt-btn" id="mtThinner">▬− Tipis</button>
+        <button class="mt-btn" id="mtThicker">▬+ Tebal</button>
+        <span class="mt-hint">Sudut = resize, lingkaran atas = putar</span>
+        ${markSwatchesHtml(mark)}
+        <button class="mt-btn mt-danger" id="mtDelete">Hapus</button>`;
+      const maxThickness = Math.max(20, Math.round(annotateCanvas.width / 30));
+      el('mtThinner').onclick = () => { mark.thickness = Math.max(1, (mark.thickness || 4) - 2); redrawAnnotator(); updateMarkToolbarPosition(); };
+      el('mtThicker').onclick = () => { mark.thickness = Math.min(maxThickness, (mark.thickness || 4) + 2); redrawAnnotator(); updateMarkToolbarPosition(); };
+      el('mtDelete').onclick = () => { annotatorMarks = annotatorMarks.filter(m => m.id !== mark.id); selectMark(null); };
+      wireMarkSwatches(mark);
+    }
+  }
+
+  function selectMark(id){
+    selectedMarkId = id;
+    redrawAnnotator();
+    const mark = annotatorMarks.find(m => m.id === id);
+    if (!mark){ markToolbar.classList.remove('show'); return; }
+    renderMarkToolbarContent(mark);
+    markToolbar.classList.add('show');
+    updateMarkToolbarPosition();
+  }
+
+  function applyResize(ia, pt){
+    const { mark, handle, orig } = ia;
+    const angle = orig.angle || 0;
+    const cx = orig.x + orig.w / 2, cy = orig.y + orig.h / 2;
+    const af = HANDLE_ANCHOR_FRAC[handle];
+    const anchorLocal = { x: orig.x + af.x * orig.w, y: orig.y + af.y * orig.h };
+    const anchorWorld = angle ? rotatePoint(anchorLocal.x, anchorLocal.y, cx, cy, angle) : anchorLocal;
+
+    const worldVec = { x: pt.x - anchorWorld.x, y: pt.y - anchorWorld.y };
+    let localVec = worldVec;
+    if (angle){
+      const cos = Math.cos(-angle), sin = Math.sin(-angle);
+      localVec = { x: worldVec.x * cos - worldVec.y * sin, y: worldVec.x * sin + worldVec.y * cos };
+    }
+
+    const sign = HANDLE_SIGN[handle];
+    const minSize = Math.max(4, screenPxToCanvasPx(6));
+    const newW = Math.max(minSize, sign.sx * localVec.x);
+    const newH = Math.max(minSize, sign.sy * localVec.y);
+    const newX = anchorLocal.x - af.x * newW;
+    const newY = anchorLocal.y - af.y * newH;
+
+    mark.x = newX; mark.y = newY; mark.w = newW; mark.h = newH;
+  }
+
+  function openAnnotator(sourceCanvas, onConfirm){
+    annotatorOnConfirm = onConfirm;
+    annotatorMarks = [];
+    annotatorMode = 'box';
+    annotatorColor = '#FF3B30';
+    colorCustom.value = '#FF3B30';
+    setActiveSwatch('#FF3B30');
+    selectedMarkId = null;
+    interaction = null;
+    updateModeButtons();
+    markToolbar.classList.remove('show');
+    annotatorBaseCanvas = document.createElement('canvas');
+    annotatorBaseCanvas.width = sourceCanvas.width;
+    annotatorBaseCanvas.height = sourceCanvas.height;
+    annotatorBaseCanvas.getContext('2d').drawImage(sourceCanvas, 0, 0);
+
+    annotateCanvas.width = sourceCanvas.width;
+    annotateCanvas.height = sourceCanvas.height;
+    redrawAnnotator();
+    annotateOverlay.classList.add('show');
+  }
+  let annotatorOnConfirm = null;
+
+  function closeAnnotator(){
+    annotateOverlay.classList.remove('show');
+    markToolbar.classList.remove('show');
+    closeTextInputPanel();
+    annotatorOnConfirm = null;
+    interaction = null;
+    selectedMarkId = null;
+  }
+
+  annotateCanvas.addEventListener('pointerdown', (e) => {
+    annotateCanvas.setPointerCapture(e.pointerId);
+    const pt = canvasPointFromEvent(e);
+
+    if (selectedMarkId){
+      const sel = annotatorMarks.find(m => m.id === selectedMarkId);
+      if (sel && sel.type === 'box'){
+        const handle = findHandleAt(sel, pt);
+        if (handle === 'rotate'){
+          interaction = { type: 'rotate', mark: sel, cx: sel.x + sel.w / 2, cy: sel.y + sel.h / 2 };
+          return;
+        }
+        if (handle){
+          interaction = { type: 'resize', mark: sel, handle, orig: { x: sel.x, y: sel.y, w: sel.w, h: sel.h, angle: sel.angle || 0 } };
+          return;
+        }
+      }
+    }
+
+    const hit = findMarkAt(pt);
+    if (hit){
+      selectMark(hit.id);
+      interaction = {
+        type: 'move', mark: hit, start: pt, origX: hit.x, origY: hit.y,
+        origPoints: hit.type === 'pen' ? hit.points.map(p => ({ x: p.x, y: p.y })) : null
+      };
+      return;
+    }
+
+    selectMark(null);
+    if (annotatorMode === 'box') interaction = { type: 'draw-box', start: pt };
+    else if (annotatorMode === 'pen') interaction = { type: 'draw-pen', points: [pt] };
+    else interaction = { type: 'place-text', start: pt };
+  });
+
+  annotateCanvas.addEventListener('pointermove', (e) => {
+    if (!interaction) return;
+    const pt = canvasPointFromEvent(e);
+    if (interaction.type === 'draw-box'){
+      redrawAnnotator(normalizeBox(interaction.start, pt));
+    } else if (interaction.type === 'draw-pen'){
+      interaction.points.push(pt);
+      redrawAnnotator({ type: 'pen', points: interaction.points, color: annotatorColor, thickness: Math.max(4, Math.round(annotateCanvas.width / 220)) });
+    } else if (interaction.type === 'move'){
+      if (interaction.mark.type === 'pen'){
+        const dx = pt.x - interaction.start.x, dy = pt.y - interaction.start.y;
+        interaction.mark.points = interaction.origPoints.map(p => ({ x: p.x + dx, y: p.y + dy }));
+      } else {
+        interaction.mark.x = interaction.origX + (pt.x - interaction.start.x);
+        interaction.mark.y = interaction.origY + (pt.y - interaction.start.y);
+      }
+      redrawAnnotator();
+      updateMarkToolbarPosition();
+    } else if (interaction.type === 'resize'){
+      applyResize(interaction, pt);
+      redrawAnnotator();
+      updateMarkToolbarPosition();
+    } else if (interaction.type === 'rotate'){
+      const raw = Math.atan2(pt.y - interaction.cy, pt.x - interaction.cx) + Math.PI / 2;
+      const step = Math.PI / 12; // snap tiap 15 derajat kalau deket
+      const nearest = Math.round(raw / step) * step;
+      interaction.mark.angle = Math.abs(raw - nearest) < 0.07 ? nearest : raw;
+      redrawAnnotator();
+      updateMarkToolbarPosition();
+    }
+  });
+
+  annotateCanvas.addEventListener('pointerup', (e) => {
+    if (!interaction) return;
+    const pt = canvasPointFromEvent(e);
+
+    if (interaction.type === 'draw-box'){
+      const box = normalizeBox(interaction.start, pt);
+      const minSize = Math.max(4, screenPxToCanvasPx(6));
+      if (box.w > minSize && box.h > minSize){
+        box.id = genId();
+        box.color = annotatorColor;
+        box.thickness = Math.max(4, Math.round(annotateCanvas.width / 220));
+        annotatorMarks.push(box);
+        selectMark(box.id);
+      } else {
+        redrawAnnotator();
+      }
+    } else if (interaction.type === 'place-text'){
+      const dist = Math.hypot(pt.x - interaction.start.x, pt.y - interaction.start.y);
+      const tapTolerance = screenPxToCanvasPx(12);
+      if (dist < tapTolerance){
+        const startPt = interaction.start;
+        const screenAnchor = canvasPointToScreen(startPt);
+        redrawAnnotator();
+        askText('', screenAnchor, (val) => {
+          if (val){
+            const fontSize = Math.max(20, Math.round(annotateCanvas.width / 32));
+            const mark = { id: genId(), type: 'text', x: startPt.x, y: startPt.y, text: val, fontSize, color: annotatorColor };
+            annotatorMarks.push(mark);
+            selectMark(mark.id);
+          } else {
+            redrawAnnotator();
+          }
+        });
+      } else {
+        redrawAnnotator();
+      }
+    } else if (interaction.type === 'draw-pen'){
+      interaction.points.push(pt);
+      const mark = {
+        id: genId(), type: 'pen', points: interaction.points,
+        color: annotatorColor, thickness: Math.max(4, Math.round(annotateCanvas.width / 220))
+      };
+      annotatorMarks.push(mark);
+      selectMark(mark.id);
+    } else if (interaction.type === 'move' || interaction.type === 'resize' || interaction.type === 'rotate'){
+      redrawAnnotator();
+      updateMarkToolbarPosition();
+    }
+    interaction = null;
+  });
+
+  btnAnnotateUndo.addEventListener('click', () => {
+    const removed = annotatorMarks.pop();
+    if (removed && removed.id === selectedMarkId) selectMark(null);
+    else redrawAnnotator();
+  });
+  btnAnnotateClear.addEventListener('click', () => { annotatorMarks = []; selectMark(null); });
+  btnAnnotateCancel.addEventListener('click', closeAnnotator);
+  btnAnnotateDone.addEventListener('click', () => {
+    const finalCanvas = document.createElement('canvas');
+    finalCanvas.width = annotatorBaseCanvas.width;
+    finalCanvas.height = annotatorBaseCanvas.height;
+    const fctx = finalCanvas.getContext('2d');
+    fctx.drawImage(annotatorBaseCanvas, 0, 0);
+    flattenMarks(fctx, finalCanvas.width, finalCanvas.height);
+    const cb = annotatorOnConfirm;
+    closeAnnotator();
+    if (cb) cb(finalCanvas);
+  });
+
+  btnAnnotateNew.addEventListener('click', async () => {
+    if (!selectedFile && !annotatedMasterCanvas){
+      showStatus('Pilih, ambil, atau tempel (Ctrl+V) foto dulu.', 'error');
+      return;
+    }
+    try{
+      let canvasForEdit;
+      if (annotatedMasterCanvas){
+        canvasForEdit = annotatedMasterCanvas;
+      } else {
+        const img = await loadImageFromFile(selectedFile);
+        canvasForEdit = buildMasterCanvas(img, MASTER_MAX_DIM);
+      }
+      openAnnotator(canvasForEdit, (resultCanvas) => {
+        annotatedMasterCanvas = resultCanvas;
+        previewThumb.src = resultCanvas.toDataURL('image/jpeg', 0.7);
+        previewThumb.style.display = 'inline-block';
+        showStatus('Tanda ditambahkan ke foto.', 'success');
+      });
+    }catch(e){
+      showStatus('Gagal membuka foto untuk ditandai.', 'error');
+    }
+  });
+
+  async function handleAnnotateExisting(id){
+    try{
+      const res = await window.storage.get(fullKey(id), false);
+      const img = await loadImageFromDataUrl(res.value);
+      const canvas = buildMasterCanvas(img, MASTER_MAX_DIM);
+      openAnnotator(canvas, async (resultCanvas) => {
+        try{
+          const newDataUrl = canvasToJpegLimited(resultCanvas, MAX_STORED_CHARS);
+          const newThumb = buildThumbnailFromCanvas(resultCanvas, 220);
+          await window.storage.set(fullKey(id), newDataUrl, false);
+          const entry = photoIndex.find(p => p.id === id);
+          if (entry) entry.thumbnail = newThumb;
+          await saveIndex();
+          renderAll();
+          showStatus('Foto diperbarui dengan tanda.', 'success');
+        }catch(e){
+          showStatus('Gagal menyimpan tanda ke foto.', 'error');
+        }
+      });
+    }catch(e){
+      showStatus('Gagal memuat foto untuk ditandai.', 'error');
+    }
+  }
+
+  // ---------- form ----------
+  fileInput.addEventListener('change', () => {
+    const f = fileInput.files[0];
+    if (!f) return;
+    selectedFile = f;
+    annotatedMasterCanvas = null;
+    previewThumb.src = URL.createObjectURL(f);
+    previewThumb.style.display = 'inline-block';
+    fileNameLabel.textContent = f.name;
+  });
+
+  function resetForm(keepWi){
+    if (!keepWi){
+      el('wiNumber').value = '';
+      el('wiTitle').value = '';
+    }
+    el('stepNumber').value = '';
+    el('kegiatan').value = '';
+    fileInput.value = '';
+    selectedFile = null;
+    annotatedMasterCanvas = null;
+    previewThumb.style.display = 'none';
+    previewThumb.src = '';
+    fileNameLabel.textContent = '';
+  }
+  btnClear.addEventListener('click', () => resetForm(false));
+
+  btnSave.addEventListener('click', async () => {
+    const wiNumber = el('wiNumber').value.trim();
+    const wiTitle = el('wiTitle').value.trim();
+    const stepNumber = el('stepNumber').value.trim();
+    const kegiatan = el('kegiatan').value.trim();
+
+    if (!wiNumber || !stepNumber || !kegiatan){
+      showStatus('Isi nomor WI, nomor langkah, dan kegiatan dulu.', 'error');
+      return;
+    }
+    if (!selectedFile && !annotatedMasterCanvas){
+      showStatus('Pilih, ambil, atau tempel (Ctrl+V) foto dulu.', 'error');
+      return;
+    }
+
+    btnSave.disabled = true;
+    const originalLabel = btnSave.innerHTML;
+    btnSave.innerHTML = '<span class="spinner"></span> Menyimpan...';
+
+    try{
+      let masterCanvas;
+      if (annotatedMasterCanvas){
+        masterCanvas = annotatedMasterCanvas;
+      } else {
+        const img = await loadImageFromFile(selectedFile);
+        masterCanvas = buildMasterCanvas(img, MASTER_MAX_DIM);
+      }
+      const fullDataUrl = canvasToJpegLimited(masterCanvas, MAX_STORED_CHARS);
+      const thumbDataUrl = buildThumbnailFromCanvas(masterCanvas, 220);
+      const id = 'p' + Date.now() + '_' + Math.random().toString(36).slice(2, 8);
+
+      const setRes = await window.storage.set(fullKey(id), fullDataUrl, false);
+      if (!setRes) throw new Error('Penyimpanan foto gagal');
+
+      photoIndex.push({
+        id, wiNumber, wiTitle, stepNumber, kegiatan,
+        timestamp: Date.now(), thumbnail: thumbDataUrl
+      });
+      await saveIndex();
+
+      resetForm(true);
+      renderAll();
+      showStatus('Foto tersimpan.', 'success');
+    }catch(e){
+      console.error(e);
+      showStatus('Gagal menyimpan foto. Coba lagi.', 'error');
+    }finally{
+      btnSave.disabled = false;
+      btnSave.innerHTML = originalLabel;
+    }
+  });
+
+  // ---------- delete / edit caption ----------
+  async function handleDelete(id){
+    if (!confirm('Hapus foto ini? Tindakan tidak bisa dibatalkan.')) return;
+    try{ await window.storage.delete(fullKey(id), false); }catch(e){ /* mungkin sudah tidak ada */ }
+    photoIndex = photoIndex.filter(p => p.id !== id);
+    await saveIndex();
+    renderAll();
+    showStatus('Foto dihapus.', 'success');
+  }
+
+  function handleEditStart(id, rowEl){
+    const entry = photoIndex.find(p => p.id === id);
+    if (!entry) return;
+    rowEl.innerHTML = `
+      <div style="flex:1;">
+        <div class="edit-grid">
+          <input type="text" class="edit-wi" value="${escapeAttr(entry.wiNumber)}" placeholder="Nomor WI" />
+          <input type="text" class="edit-step" value="${escapeAttr(entry.stepNumber)}" placeholder="Nomor langkah" />
+          <input type="text" class="edit-kegiatan" value="${escapeAttr(entry.kegiatan)}" placeholder="Kegiatan" />
+          <div class="edit-actions">
+            <button class="btn btn-ghost btn-sm edit-cancel">Batal</button>
+            <button class="btn btn-primary btn-sm edit-save">Simpan</button>
+          </div>
+        </div>
+      </div>`;
+    rowEl.querySelector('.edit-cancel').addEventListener('click', renderAll);
+    rowEl.querySelector('.edit-save').addEventListener('click', async () => {
+      const newWi = rowEl.querySelector('.edit-wi').value.trim();
+      const newStep = rowEl.querySelector('.edit-step').value.trim();
+      const newKegiatan = rowEl.querySelector('.edit-kegiatan').value.trim();
+      if (!newWi || !newStep || !newKegiatan){
+        showStatus('Semua kolom wajib diisi.', 'error');
+        return;
+      }
+      entry.wiNumber = newWi; entry.stepNumber = newStep; entry.kegiatan = newKegiatan;
+      await saveIndex();
+      renderAll();
+      showStatus('Keterangan diperbarui.', 'success');
+    });
+  }
+
+  function escapeAttr(s){
+    return (s || '').toString().replace(/"/g, '&quot;');
+  }
+  function escapeHtml(s){
+    return (s || '').toString()
+      .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  }
+
+  // ---------- view / download ----------
+  async function openViewer(id){
+    modalOverlay.classList.add('show');
+    modalBody.innerHTML = '<span class="modal-loading">Memuat foto...</span>';
+    try{
+      const res = await window.storage.get(fullKey(id), false);
+      modalBody.innerHTML = `<img src="${res.value}" alt="Foto WI" />`;
+    }catch(e){
+      modalBody.innerHTML = '<span class="modal-loading">Gagal memuat foto.</span>';
+    }
+  }
+  modalClose.addEventListener('click', () => modalOverlay.classList.remove('show'));
+  modalOverlay.addEventListener('click', (e) => { if (e.target === modalOverlay) modalOverlay.classList.remove('show'); });
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape'){
+      modalOverlay.classList.remove('show');
+      closeAnnotator();
+    }
+  });
+
+  async function handleDownloadOne(id){
+    const entry = photoIndex.find(p => p.id === id);
+    if (!entry) return;
+    try{
+      const res = await window.storage.get(fullKey(id), false);
+      const blob = dataUrlToBlob(res.value);
+      triggerDownload(blob, buildFilename(entry));
+    }catch(e){
+      showStatus('Gagal mengunduh foto.', 'error');
+    }
+  }
+
+  btnZip.addEventListener('click', async () => {
+    const list = getFilteredList();
+    if (list.length === 0){
+      showStatus('Tidak ada foto untuk diunduh.', 'error');
+      return;
+    }
+    const originalLabel = btnZip.innerHTML;
+    btnZip.disabled = true;
+    btnZip.innerHTML = '<span class="spinner"></span> Menyiapkan ZIP...';
+    try{
+      const zip = new JSZip();
+      for (const entry of list){
+        const res = await window.storage.get(fullKey(entry.id), false);
+        const blob = dataUrlToBlob(res.value);
+        zip.folder('WI ' + entry.wiNumber).file(buildFilename(entry), blob);
+      }
+      const content = await zip.generateAsync({ type: 'blob' });
+      const name = currentFilter === 'all' ? 'Dokumentasi-Foto-WI.zip' : `Dokumentasi-Foto-WI-${sanitize(currentFilter)}.zip`;
+      triggerDownload(content, name);
+      showStatus('ZIP siap diunduh.', 'success');
+    }catch(e){
+      console.error(e);
+      showStatus('Gagal membuat ZIP.', 'error');
+    }finally{
+      btnZip.disabled = false;
+      btnZip.innerHTML = originalLabel;
+    }
+  });
+
+  btnResetAll.addEventListener('click', async () => {
+    if (photoIndex.length === 0){
+      showStatus('Belum ada data.', 'error');
+      return;
+    }
+    if (!confirm('Hapus SEMUA foto dan data di app ini? Tindakan tidak bisa dibatalkan.')) return;
+    btnResetAll.disabled = true;
+    try{
+      for (const entry of photoIndex){
+        try{ await window.storage.delete(fullKey(entry.id), false); }catch(e){}
+      }
+      photoIndex = [];
+      await saveIndex();
+      renderAll();
+      showStatus('Semua data dihapus.', 'success');
+    }catch(e){
+      showStatus('Gagal menghapus semua data.', 'error');
+    }finally{
+      btnResetAll.disabled = false;
+    }
+  });
+
+  // ---------- rendering ----------
+  function getFilteredList(){
+    return currentFilter === 'all' ? photoIndex.slice() : photoIndex.filter(p => p.wiNumber === currentFilter);
+  }
+
+  function naturalCompare(a, b){
+    return (a || '').toString().localeCompare((b || '').toString(), undefined, { numeric: true, sensitivity: 'base' });
+  }
+
+  function renderFilterOptions(){
+    const wis = Array.from(new Set(photoIndex.map(p => p.wiNumber))).sort(naturalCompare);
+    const prev = currentFilter;
+    filterSelect.innerHTML = '<option value="all">Semua WI</option>' +
+      wis.map(w => `<option value="${escapeAttr(w)}">WI ${escapeHtml(w)}</option>`).join('');
+    currentFilter = wis.includes(prev) ? prev : 'all';
+    filterSelect.value = currentFilter;
+  }
+  filterSelect.addEventListener('change', () => {
+    currentFilter = filterSelect.value;
+    renderGallery();
+  });
+
+  function renderGallery(){
+    const list = getFilteredList();
+    galleryTitle.textContent = `Koleksi foto (${list.length})`;
+
+    if (list.length === 0){
+      galleryContainer.innerHTML = `<div class="empty-state">${
+        photoIndex.length === 0
+          ? 'Belum ada foto tersimpan. Isi keterangan di atas lalu ambil, pilih, atau tempel (Ctrl+V) foto.'
+          : 'Tidak ada foto untuk filter WI ini.'
+      }</div>`;
+      return;
+    }
+
+    const groups = {};
+    list.forEach(p => { (groups[p.wiNumber] = groups[p.wiNumber] || []).push(p); });
+    const wiKeys = Object.keys(groups).sort(naturalCompare);
+
+    galleryContainer.innerHTML = '';
+    wiKeys.forEach(wi => {
+      const items = groups[wi].slice().sort((a, b) => naturalCompare(a.stepNumber, b.stepNumber));
+      const withTitle = items.find(i => i.wiTitle);
+      const title = withTitle ? withTitle.wiTitle : null;
+
+      const details = document.createElement('details');
+      details.className = 'wi-group';
+      details.open = wiKeys.length <= 3;
+
+      const summary = document.createElement('summary');
+      summary.innerHTML = `<span>WI ${escapeHtml(wi)}${title ? ' — ' + escapeHtml(title) : ''}</span>
+        <span class="wi-count">${items.length} foto <span class="chev">▶</span></span>`;
+      details.appendChild(summary);
+
+      items.forEach(entry => {
+        const row = document.createElement('div');
+        row.className = 'photo-row';
+        row.innerHTML = `
+          <button class="thumb-btn" title="Lihat foto"><img class="thumb" src="${entry.thumbnail}" alt="Thumbnail" /></button>
+          <div class="row-info">
+            <div class="step">Langkah ${escapeHtml(entry.stepNumber)}</div>
+            <p class="kegiatan">${escapeHtml(entry.kegiatan)}</p>
+            <div class="timestamp">${new Date(entry.timestamp).toLocaleString('id-ID')}</div>
+          </div>
+          <div class="row-actions">
+            <button class="btn btn-ghost btn-sm act-view">Lihat</button>
+            <button class="btn btn-ghost btn-sm act-download">Unduh</button>
+            <button class="btn btn-mark btn-sm act-annotate">🔴 Tandai</button>
+            <button class="btn btn-ghost btn-sm act-edit">Edit</button>
+            <button class="btn btn-danger btn-sm act-delete">Hapus</button>
+          </div>`;
+        row.querySelector('.thumb-btn').addEventListener('click', () => openViewer(entry.id));
+        row.querySelector('.act-view').addEventListener('click', () => openViewer(entry.id));
+        row.querySelector('.act-download').addEventListener('click', () => handleDownloadOne(entry.id));
+        row.querySelector('.act-annotate').addEventListener('click', () => handleAnnotateExisting(entry.id));
+        row.querySelector('.act-edit').addEventListener('click', () => handleEditStart(entry.id, row));
+        row.querySelector('.act-delete').addEventListener('click', () => handleDelete(entry.id));
+        details.appendChild(row);
+      });
+
+      galleryContainer.appendChild(details);
+    });
+  }
+
+  function renderAll(){
+    renderFilterOptions();
+    renderGallery();
+  }
+
+  // ---------- init ----------
+  (async function init(){
+    galleryContainer.innerHTML = '<div class="empty-state">Memuat data...</div>';
+    await loadIndex();
+    renderAll();
+  })();
+})();
+</script>
+
+</body>
+</html>
